@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#222" />
+  <title>Blockfall</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div id="menu">
+    <h1>Blockfall</h1>
+    <img id="player-menu" src="images/player1.png" alt="Player" />
+    <p class="score-display">High Score: <span id="highScoreDisplay">0</span></p>
+    <p class="score-display">Previous Score: <span id="prevScoreDisplay">0</span></p>
+    <button id="startBtn">Start Game</button>
+    <button id="skinBtn">Change Skin</button>
+  </div>
+
+  <div id="game">
+    <div id="score">Score: 0</div>
+    <div id="pauseBtn">⏸️</div>
+    <img id="player" src="images/player1.png" alt="Player" />
+    <div class="controls">
+      <button id="leftBtn">⟵</button>
+      <button id="rightBtn">⟶</button>
+    </div>
+  </div>
+
+  <div id="skinModal" style="display:none;">
+    <div id="skinModalContent">
+      <h2>Select Your Skin</h2>
+      <div id="skinCarouselContainer">
+        <button id="skinLeftArrow" class="skin-arrow">&#8592;</button>
+        <div id="skinOptions">
+          <img src="images/player1.png" class="skin-option" data-index="0" alt="Skin 1" />
+          <img src="images/player2.png" class="skin-option" data-index="1" alt="Skin 2" />
+          <img src="images/player3.png" class="skin-option" data-index="2" alt="Skin 3" />
+          <img src="images/player4.png" class="skin-option" data-index="3" alt="Skin 4" />
+          <img src="images/player5.png" class="skin-option" data-index="4" alt="Skin 5" />
+          <img src="images/player6.png" class="skin-option" data-index="5" alt="Skin 6" />
+          <img src="images/player7.png" class="skin-option" data-index="6" alt="Skin 7" />
+          <img src="images/player8.png" class="skin-option" data-index="7" alt="Skin 8" />
+          <img src="images/player9.png" class="skin-option" data-index="8" alt="Skin 9" />
+          <img src="images/player10.png" class="skin-option" data-index="9" alt="Skin 10" />
+          <img src="images/player11.png" class="skin-option" data-index="10" alt="Skin 11" />
+          <img src="images/player12.png" class="skin-option" data-index="11" alt="Skin 12" />
+          <img src="images/player13.png" class="skin-option" data-index="12" alt="Skin 13" />
+          <img src="images/player14.png" class="skin-option" data-index="13" alt="Skin 14" />
+          <img src="images/player15.png" class="skin-option" data-index="14" alt="Skin 15" />
+          <img src="images/player16.png" class="skin-option" data-index="15" alt="Skin 16" />
+          <img src="images/player17.png" class="skin-option" data-index="16" alt="Skin 17" />
+          <img src="images/player18.png" class="skin-option" data-index="17" alt="Skin 18" />
+          <img src="images/player19.png" class="skin-option" data-index="18" alt="Skin 19" />
+          <img src="images/player20.png" class="skin-option" data-index="19" alt="Skin 20" />
+        </div>
+        <button id="skinRightArrow" class="skin-arrow">&#8594;</button>
+      </div>
+      <button id="closeSkinModal">Close</button>
+    </div>
+  </div>
+
+  <div id="notificationPopup" style="display:none;">
+    <div id="notificationContent">
+      <span id="notificationMessage"></span>
+      <button id="closeNotification">OK</button>
+    </div>
+  </div>
+
+  <audio id="bgm" loop>
+    <source src="phonk-1.mp3" type="audio/mp3" />
+  </audio>
+
+  <script src="background.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
