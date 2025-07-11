@@ -128,7 +128,7 @@ document.querySelectorAll('.skin-option').forEach(img => {
 function toggleMute() {
   isMuted = !isMuted;
   localStorage.setItem("isMuted", isMuted);
-  document.getElementById("muteBtn").textContent = isMuted ? "🔇" : "🔊";
+  document.getElementById("muteBtn").innerHTML = isMuted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
   if (isMuted) {
     bgm.pause();
   } else if (isPlaying) {
@@ -240,91 +240,52 @@ function spawnFlame(x, y) {
   }
 }
 
-function movePlayer(dir) {
+const keys = { left: false, right: false };
+
+function smoothPlayerMove() {
   if (!isPlaying || isPaused) return;
-  // Make player speed scale with gameSpeed
-  const baseSpeed = 15;
-  const speed = baseSpeed + (gameSpeed - 2) * 3; // Adjust multiplier as needed
-
-  // Store previous position
-  const prevX = playerX;
-  const prevY = game.offsetHeight - 20 - player.offsetHeight; // 20 is bottom, player height
-
-  // Move player
-  if (dir === "left") playerX -= speed;
-  if (dir === "right") playerX += speed;
+  let moved = false;
+  const baseSpeed = 7;
+  const speed = baseSpeed + (gameSpeed - 2) * 1.5;
+  if (keys.left) {
+    playerX -= speed;
+    moved = true;
+  }
+  if (keys.right) {
+    playerX += speed;
+    moved = true;
+  }
   const minX = 0;
   const maxX = game.offsetWidth - player.offsetWidth;
   playerX = Math.max(minX, Math.min(maxX, playerX));
   player.style.left = playerX + "px";
-
-  // Sparkle direction: bias angle based on movement
-  const angleOffset = dir === "left" ? 0 : Math.PI; // 0 for left, PI for right
-
-  // --- FLAME TRAIL EFFECT ---
-  // Get the player's center position relative to #game
-  const playerRect = player.getBoundingClientRect();
-  const gameRect = game.getBoundingClientRect();
-  const centerX = playerRect.left - gameRect.left + playerRect.width / 2 - 5; // -5 to center the 10px flame
-  const centerY = playerRect.top - gameRect.top + playerRect.height / 2 - 5;
-  spawnFlame(centerX, centerY);
-  // --- END FLAME TRAIL ---
-
-  if (useRipple) {
-    // Ripple effect
-    for (let i = 0; i < 3; i++) {
-      const ripple = document.createElement("div");
-      ripple.className = "ripple";
-      ripple.style.color = sparkleColors[currentSkin] || "#00BFFF";
-      // Slightly randomize position
-      const angle = Math.random() * 2 * Math.PI;
-      const radius = 8 * Math.random();
-      const x = prevX + 50 + Math.cos(angle) * radius - 5;
-      const y = prevY + Math.sin(angle) * radius - 5;
-      ripple.style.left = x + "px";
-      ripple.style.top = y + "px";
-      game.appendChild(ripple);
-
-      setTimeout(() => {
-        ripple.classList.add("fade");
-      }, 10);
-
-      setTimeout(() => {
-        ripple.remove();
-      }, 610);
-    }
-  } else {
-    // Droplet effect
-    for (let i = 0; i < 5; i++) {
-      const droplet = document.createElement("div");
-      droplet.className = "droplet";
-      droplet.style.color = sparkleColors[currentSkin] || "#00BFFF";
-      // Randomize position around the player
-      const angle = Math.random() * 2 * Math.PI;
-      const radius = 10 * Math.random();
-      const x = prevX + 50 + Math.cos(angle) * radius - 4;
-      const y = prevY + Math.sin(angle) * radius - 4;
-      droplet.style.left = x + "px";
-      droplet.style.top = y + "px";
-      game.appendChild(droplet);
-
-      setTimeout(() => {
-        droplet.classList.add("fade");
-      }, 10);
-
-      setTimeout(() => {
-        droplet.remove();
-      }, 510);
-    }
+  if (moved) {
+    const playerRect = player.getBoundingClientRect();
+    const gameRect = game.getBoundingClientRect();
+    const centerX = playerRect.left - gameRect.left + playerRect.width / 2 - 5;
+    const centerY = playerRect.top - gameRect.top + playerRect.height / 2 - 5;
+    spawnFlame(centerX, centerY);
   }
-  useRipple = !useRipple;
 }
 
 function attachTouchControls() {
-  document.getElementById("leftBtn").addEventListener("touchstart", () => movePlayer("left"));
-  document.getElementById("rightBtn").addEventListener("touchstart", () => movePlayer("right"));
-  document.getElementById("leftBtn").addEventListener("click", () => movePlayer("left"));
-  document.getElementById("rightBtn").addEventListener("click", () => movePlayer("right"));
+  const leftBtn = document.getElementById("leftBtn");
+  const rightBtn = document.getElementById("rightBtn");
+
+  // Touch events for mobile
+  leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); keys.left = true; });
+  leftBtn.addEventListener("touchend", (e) => { e.preventDefault(); keys.left = false; });
+  rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); keys.right = true; });
+  rightBtn.addEventListener("touchend", (e) => { e.preventDefault(); keys.right = false; });
+
+  // Mouse events for desktop
+  leftBtn.addEventListener("mousedown", () => { keys.left = true; });
+  leftBtn.addEventListener("mouseup", () => { keys.left = false; });
+  leftBtn.addEventListener("mouseleave", () => { keys.left = false; });
+  rightBtn.addEventListener("mousedown", () => { keys.right = true; });
+  rightBtn.addEventListener("mouseup", () => { keys.right = false; });
+  rightBtn.addEventListener("mouseleave", () => { keys.right = false; });
+
   document.getElementById("pauseBtn").addEventListener("click", togglePause);
   document.getElementById("muteBtn").addEventListener("click", toggleMute);
   document.getElementById("controlsBtn").addEventListener("click", toggleControls);
@@ -332,8 +293,12 @@ function attachTouchControls() {
 
 document.addEventListener("keydown", (e) => {
   if (!isPlaying || isPaused) return;
-  if (e.key === "ArrowLeft") movePlayer("left");
-  else if (e.key === "ArrowRight") movePlayer("right");
+  if (e.key === "ArrowLeft") keys.left = true;
+  if (e.key === "ArrowRight") keys.right = true;
+});
+document.addEventListener("keyup", (e) => {
+  if (e.key === "ArrowLeft") keys.left = false;
+  if (e.key === "ArrowRight") keys.right = false;
 });
 
 startBtn.addEventListener("click", startGame);
@@ -342,7 +307,7 @@ pauseBtn.addEventListener("click", togglePause);
 function togglePause() {
   if (!isPlaying) return;
   isPaused = !isPaused;
-  document.getElementById("pauseBtn").textContent = isPaused ? "▶️" : "⏸️";
+  document.getElementById("pauseBtn").innerHTML = isPaused ? '<i class="fa-solid fa-play"></i>' : '<i class="fa-solid fa-pause"></i>';
   if (!isPaused) loop();
 }
 
@@ -360,6 +325,7 @@ function createObstacle() {
 
 function loop() {
   if (!isPlaying || isPaused) return;
+  smoothPlayerMove();
 
   obstacles.forEach((obs, i) => {
     let topPos = parseFloat(obs.style.top);
@@ -402,7 +368,10 @@ function loop() {
 updatePlayerSkin();
 
 // Initialize mute state
-document.getElementById("muteBtn").textContent = isMuted ? "🔇" : "🔊";
+// Set correct icon for mute and pause on load
+const muteBtn = document.getElementById("muteBtn");
+muteBtn.innerHTML = isMuted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+document.getElementById("pauseBtn").innerHTML = '<i class="fa-solid fa-pause"></i>';
 if (isMuted) bgm.pause();
 
 // Prevent scrolling and double-tap zoom during gameplay
@@ -419,21 +388,28 @@ game.addEventListener("click", function(e) {
   const rect = game.getBoundingClientRect();
   const x = e.clientX - rect.left;
   if (x < rect.width / 2) {
-    movePlayer("left");
+    keys.left = true;
   } else {
-    movePlayer("right");
+    keys.right = true;
   }
 });
 
-game.addEventListener("touchstart", function(e) {
+game.addEventListener("touchend", function(e) {
+  keys.left = false;
+  keys.right = false;
+});
+
+game.addEventListener("mousedown", function(e) {
   if (!isPlaying || isPaused) return;
-  if (e.touches.length > 0) {
-    const rect = game.getBoundingClientRect();
-    const x = e.touches[0].clientX - rect.left;
-    if (x < rect.width / 2) {
-      movePlayer("left");
-    } else {
-      movePlayer("right");
-    }
+  const rect = game.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  if (x < rect.width / 2) {
+    keys.left = true;
+  } else {
+    keys.right = true;
   }
+});
+game.addEventListener("mouseup", function(e) {
+  keys.left = false;
+  keys.right = false;
 });
