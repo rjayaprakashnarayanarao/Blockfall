@@ -218,6 +218,28 @@ function gameOver() {
   }, 300);
 }
 
+function spawnFlame(x, y) {
+  const flameColor = sparkleColors[currentSkin] || "orange";
+  for (let i = 0; i < 5; i++) { // Spawn multiple particles for intensity
+    const flame = document.createElement('div');
+    flame.className = 'flame';
+
+    // Random offset for each flame
+    const offsetX = (Math.random() - 0.5) * 20;
+    const offsetY = (Math.random() - 0.5) * 20;
+
+    flame.style.left = (x + offsetX) + 'px';
+    flame.style.top = (y + offsetY) + 'px';
+
+    // Set the background to a radial gradient using the skin color
+    flame.style.background = `radial-gradient(circle at center, ${flameColor} 40%, transparent 100%)`;
+
+    game.appendChild(flame); // Use your #game container
+
+    setTimeout(() => flame.remove(), 600); // remove after animation
+  }
+}
+
 function movePlayer(dir) {
   if (!isPlaying || isPaused) return;
   // Make player speed scale with gameSpeed
@@ -238,6 +260,15 @@ function movePlayer(dir) {
 
   // Sparkle direction: bias angle based on movement
   const angleOffset = dir === "left" ? 0 : Math.PI; // 0 for left, PI for right
+
+  // --- FLAME TRAIL EFFECT ---
+  // Get the player's center position relative to #game
+  const playerRect = player.getBoundingClientRect();
+  const gameRect = game.getBoundingClientRect();
+  const centerX = playerRect.left - gameRect.left + playerRect.width / 2 - 5; // -5 to center the 10px flame
+  const centerY = playerRect.top - gameRect.top + playerRect.height / 2 - 5;
+  spawnFlame(centerX, centerY);
+  // --- END FLAME TRAIL ---
 
   if (useRipple) {
     // Ripple effect

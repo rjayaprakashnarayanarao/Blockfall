@@ -75,7 +75,7 @@ body {
   bottom: 6vh;
   width: 70px;
   height: 70px;
-  border-radius: 50% !important;
+  /* border-radius: 50% !important; */
   z-index: 10;
   object-fit: cover !important;
 }
@@ -83,7 +83,7 @@ body {
 #player-menu {
   width: 120px;
   height: 120px;
-  border-radius: 50% !important;
+  /* border-radius: 50% !important; */
   align-items: center;
   justify-content: center;
   object-fit:cover !important;
@@ -103,7 +103,7 @@ body {
   left: 4vw;
   font-size: 7vw;
   z-index: 30;
-  font-family: 'Press Start 2P', cursive; /* or a pixel/game font */
+  font-family:'Roboto', Arial;
   color: #ffffff;
   text-shadow: 0 0 5px #f0f, 0 0 10px #f0f, 0 0 20px #f0f;
 }
@@ -449,4 +449,29 @@ body {
 
 body, button, input {
   -webkit-tap-highlight-color: transparent;
+}
+
+.flame {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  /* background will be set in JS */
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.9;
+  filter: blur(2px) drop-shadow(0 0 6px orange);
+  animation: flameAnim 0.6s ease-out forwards;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+@keyframes flameAnim {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2) translateY(-30px) rotate(20deg);
+  }
 }
