@@ -50,6 +50,8 @@ const sparkleColors = [
 ];
 
 let useRipple = true;
+let isMuted = localStorage.getItem("isMuted") === "true";
+let controlsVisible = false;
 
 function updatePlayerSkin() {
   // Update menu and game player images
@@ -123,6 +125,22 @@ document.querySelectorAll('.skin-option').forEach(img => {
   });
 });
 
+function toggleMute() {
+  isMuted = !isMuted;
+  localStorage.setItem("isMuted", isMuted);
+  document.getElementById("muteBtn").textContent = isMuted ? "🔇" : "🔊";
+  if (isMuted) {
+    bgm.pause();
+  } else if (isPlaying) {
+    bgm.play();
+  }
+}
+
+function toggleControls() {
+  controlsVisible = !controlsVisible;
+  document.querySelector(".controls").style.display = controlsVisible ? "flex" : "none";
+}
+
 function resetGame() {
   score = 0;
   gameSpeed = 2;
@@ -130,8 +148,10 @@ function resetGame() {
   game.innerHTML = `
     <div id="score">Score: 0</div>
     <div id="pauseBtn">⏸️</div>
+    <div id="muteBtn">${isMuted ? "🔇" : "🔊"}</div>
+    <div id="controlsBtn">🎮</div>
     <img id="player" src="${playerSkins[currentSkin]}" alt="Player" />
-    <div class="controls">
+    <div class="controls" style="display: none;">
       <button id="leftBtn">⟵</button>
       <button id="rightBtn">⟶</button>
     </div>`;
@@ -152,7 +172,7 @@ function resetGame() {
 function startGame() {
   menu.style.display = "none";
   game.style.display = "block";
-  bgm.play();
+  if (!isMuted) bgm.play();
   isPlaying = true;
   isPaused = false;
   resetGame();
@@ -275,6 +295,8 @@ function attachTouchControls() {
   document.getElementById("leftBtn").addEventListener("click", () => movePlayer("left"));
   document.getElementById("rightBtn").addEventListener("click", () => movePlayer("right"));
   document.getElementById("pauseBtn").addEventListener("click", togglePause);
+  document.getElementById("muteBtn").addEventListener("click", toggleMute);
+  document.getElementById("controlsBtn").addEventListener("click", toggleControls);
 }
 
 document.addEventListener("keydown", (e) => {
@@ -347,6 +369,10 @@ function loop() {
 
 // On page load, set skin
 updatePlayerSkin();
+
+// Initialize mute state
+document.getElementById("muteBtn").textContent = isMuted ? "🔇" : "🔊";
+if (isMuted) bgm.pause();
 
 // Prevent scrolling and double-tap zoom during gameplay
 function preventScroll(e) {
