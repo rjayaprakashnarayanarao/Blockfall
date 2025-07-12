@@ -267,31 +267,66 @@ body {
 
 #notificationPopup {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.7);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.3s ease-in-out;
 }
+
 #notificationContent {
-  background: #222;
-  padding: 30px 40px;
-  border-radius: 15px;
+  background: linear-gradient(145deg, #1f1f1f, #2a2a2a);
+  padding: 5px;
+  padding-bottom: 30px;
+  border-radius: 20px;
   text-align: center;
-  box-shadow: 0 4px 32px #000a;
-  color: white;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.5);
+  color: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 90%;
+  width: 320px;
+  animation: popIn 0.4s ease-out;
 }
+
+#notificationTitle {
+  font-size: 1.75rem;
+  margin-bottom: 10px;
+}
+
+#notificationMessage {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
 #closeNotification {
-  margin-top: 15px;
-  padding: 8px 20px;
+  padding: 10px 24px;
   font-size: 16px;
   background: #28a745;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#closeNotification:hover {
+  background: #218838;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .player-ghost {
@@ -459,8 +494,8 @@ body, button, input {
   border-radius: 50%;
   pointer-events: none;
   opacity: 0.9;
-  filter: blur(2px) drop-shadow(0 0 6px orange);
-  animation: flameAnim 0.6s ease-out forwards;
+  /* filter: blur(2px) drop-shadow(0 0 6px orange); */
+  animation: flameAnim 0.4s ease-out forwards;
   z-index: 0;
   mix-blend-mode: screen;
 }
